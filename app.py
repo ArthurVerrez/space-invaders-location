@@ -170,7 +170,6 @@ def main():
                 user_location = get_user_location()
                 if user_location:
                     st.session_state.user_location = user_location
-                    st.success("Located you successfully!")
 
             # Get location for map
             default_location = (
@@ -180,7 +179,10 @@ def main():
             )
 
             # Map creation with existing parameters only
-            m = create_base_map(filtered_df, default_location)
+            zoom_level = (
+                20 if st.session_state.user_location else 5
+            )  # Higher zoom when user location is available
+            m = create_base_map(filtered_df, default_location, zoom_level=zoom_level)
             m = add_invaders_to_map(m, filtered_df, use_clusters)
 
             # Add heatmap layer if requested (without modifying the existing function)
