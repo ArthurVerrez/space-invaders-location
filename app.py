@@ -133,15 +133,17 @@ def main():
     This application displays the locations of Space Invader street art around the world.
     """
     )
-    st.markdown("<small>Coucou Michele 👋</small>", unsafe_allow_html=True)
+
+    # City filter moved below subtitle
+    selected_city = st.selectbox(
+        "Select City",
+        ["All"] + cities,
+        key="selected_city",
+        index=cities.index("PA") + 1,  # Set PA as default (index 0 is "All")
+    )
 
     # Sidebar filters with more intuitive layout
-    st.sidebar.header("Filters")
-
-    # City filter
-    selected_city = st.sidebar.selectbox(
-        "Select City", ["All"] + cities, key="selected_city"
-    )
+    st.sidebar.header("Additional Filters")
 
     # Status filter with color indicators
     status_options = ["All"] + sorted(df["status"].unique().tolist())
