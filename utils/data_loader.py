@@ -1,7 +1,9 @@
 import json
 import pandas as pd
+import streamlit as st
 
 
+@st.cache_data()
 def load_invaders_data(file_path="data/space_invaders_database.json"):
     """Load Space Invaders data from JSON file and convert to DataFrame"""
     with open(file_path, "r", encoding="utf-8-sig") as f:
@@ -24,6 +26,7 @@ def load_invaders_data(file_path="data/space_invaders_database.json"):
     return df
 
 
+@st.cache_data()
 def get_cities(df):
     """Get unique cities from the dataset"""
     return sorted(df["city"].unique())

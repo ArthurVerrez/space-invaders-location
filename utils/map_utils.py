@@ -1,7 +1,9 @@
 import folium
 from folium.plugins import MarkerCluster
+import streamlit as st
 
 
+@st.cache_resource()
 def create_base_map(df, default_location=None, zoom_level=13):
     """Create a base map centered on the data points"""
     if default_location:
