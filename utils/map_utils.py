@@ -1,9 +1,11 @@
 import folium
 from folium.plugins import MarkerCluster
 import streamlit as st
+from .timing import timing_decorator
 
 
 @st.cache_resource()
+@timing_decorator
 def create_base_map(df, default_location=None, zoom_level=13):
     """Create a base map centered on the data points"""
     if default_location:
@@ -16,11 +18,14 @@ def create_base_map(df, default_location=None, zoom_level=13):
     return my_map
 
 
+@timing_decorator
 def add_invaders_to_map(my_map, df, use_clusters=True):
     """Add Space Invaders to the map"""
     if use_clusters:
         marker_cluster = MarkerCluster().add_to(my_map)
 
+    # Create all markers first
+    markers = []
     for _, row in df.iterrows():
         popup_text = f"""
         <b>ID:</b> {row['id']}<br>
@@ -41,7 +46,10 @@ def add_invaders_to_map(my_map, df, use_clusters=True):
             tooltip=row["id"],
             icon=folium.Icon(color=color, icon="gamepad", prefix="fa"),
         )
+        markers.append(marker)
 
+    # Add all markers to the map after iteration
+    for marker in markers:
         if use_clusters:
             marker.add_to(marker_cluster)
         else:

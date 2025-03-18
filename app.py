@@ -1,8 +1,10 @@
 import streamlit as st
 import folium
-from streamlit_folium import folium_static
+from streamlit_folium import st_folium
 import pandas as pd
 from streamlit_geolocation import streamlit_geolocation
+import time
+from utils.timing import timing_decorator
 
 from utils.data_loader import load_invaders_data, get_cities
 from utils.map_utils import create_base_map, add_invaders_to_map
@@ -17,10 +19,13 @@ if "get_location" not in st.session_state:
     st.session_state.get_location = True
 if "selected_invader" not in st.session_state:
     st.session_state.selected_invader = None
+if "map" not in st.session_state:
+    st.session_state.map = None
 
 
 # Load data with caching
 @st.cache_data(ttl=3600)  # Cache for 1 hour
+@timing_decorator
 def load_data():
     data = load_invaders_data()
     # Ensure data types are correct
@@ -29,7 +34,9 @@ def load_data():
     return data
 
 
-def filter_data(df, city, status, min_points):
+@st.cache_data(ttl=3600)
+@timing_decorator
+def get_filtered_data(df, city, status, min_points):
     """Filter dataframe based on selected criteria"""
     filtered = df.copy()
     if city != "All":
@@ -40,6 +47,7 @@ def filter_data(df, city, status, min_points):
     return filtered
 
 
+@timing_decorator
 def get_user_location():
     """Get user location with error handling"""
     location = streamlit_geolocation()
@@ -74,6 +82,8 @@ def display_stats(df):
         st.sidebar.metric("Highest Points", f"{max_points}")
 
 
+@st.cache_data(ttl=3600)
+@timing_decorator
 def create_visualizations(df, filtered_df):
     """Create visualization tabs with more context"""
     st.header("Visualizations")
@@ -111,6 +121,7 @@ def create_visualizations(df, filtered_df):
                 st.metric(f"{status}", f"{count}")
 
 
+@timing_decorator
 def main():
     # Load data
     df = load_data()
@@ -150,7 +161,7 @@ def main():
     )
 
     # Filter data
-    filtered_df = filter_data(df, selected_city, selected_status, selected_points)
+    filtered_df = get_filtered_data(df, selected_city, selected_status, selected_points)
 
     # Display stats
     display_stats(filtered_df)
@@ -182,8 +193,16 @@ def main():
             zoom_level = (
                 20 if st.session_state.user_location else 5
             )  # Higher zoom when user location is available
-            m = create_base_map(filtered_df, default_location, zoom_level=zoom_level)
-            m = add_invaders_to_map(m, filtered_df, use_clusters)
+
+            # Only create new map if filters changed or map doesn't exist
+            if st.session_state.map is None:
+                m = create_base_map(
+                    filtered_df, default_location, zoom_level=zoom_level
+                )
+                m = add_invaders_to_map(m, filtered_df, use_clusters)
+                st.session_state.map = m
+            else:
+                m = st.session_state.map
 
             # Add heatmap layer if requested (without modifying the existing function)
             if show_heatmap and len(filtered_df) > 0:
@@ -205,7 +224,7 @@ def main():
 
             # Display map with error handling
             try:
-                folium_static(m, width=800, height=600)
+                st_folium(m, width=800, height=600, returned_objects=[])
             except Exception as e:
                 st.error(f"Error displaying map: {str(e)}")
                 st.info("Try adjusting your filters or refreshing the page.")
