@@ -13,7 +13,7 @@ The Space Invader location data is sourced from the [SpaceInvaders](https://gith
 1. Clone the repository:
 
    ```
-   git clone https://github.com/yourusername/space-invaders-location.git
+   git clone https://github.com/ArthurVerrez/space-invaders-location.git
    cd space-invaders-location
    ```
 
@@ -32,3 +32,7 @@ The Space Invader location data is sourced from the [SpaceInvaders](https://gith
 ## Usage
 
 Run the Streamlit app:
+
+```
+streamlit run app.py
+```
