@@ -1,5 +1,7 @@
 # Space Invaders Location Map
 
+> Warning: This app was _vibe coded_ in 3 min.
+
 This project displays the locations of Space Invader street art on an interactive map using Streamlit and Folium.
 
 ## Data Source
