@@ -193,20 +193,13 @@ def main():
                 20 if st.session_state.user_location else 5
             )  # Higher zoom when user location is available
 
-            # Only create new map if filters changed or map doesn't exist
-            if st.session_state.map is None:
-                m = create_base_map(
-                    filtered_df, default_location, zoom_level=zoom_level
-                )
-                m = add_invaders_to_map(m, filtered_df, use_clusters)
-                st.session_state.map = m
-            else:
-                m = st.session_state.map
+            # Create base map
+            m = create_base_map(filtered_df, default_location, zoom_level=zoom_level)
+            m = add_invaders_to_map(m, filtered_df, use_clusters)
 
-            # Add heatmap layer if requested (without modifying the existing function)
+            # Add heatmap layer if requested
             if show_heatmap and len(filtered_df) > 0:
                 try:
-
                     # Add heatmap directly to the map
                     heat_data = [
                         [row["lat"], row["lng"]]
