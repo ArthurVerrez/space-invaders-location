@@ -4,7 +4,6 @@ import streamlit as st
 from .timing import timing_decorator
 
 
-@st.cache_resource()
 @timing_decorator
 def create_base_map(df, default_location=None, zoom_level=13):
     """Create a base map centered on the data points"""

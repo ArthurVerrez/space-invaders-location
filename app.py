@@ -1,10 +1,9 @@
 import streamlit as st
-import folium
 from streamlit_folium import st_folium
 import pandas as pd
 from streamlit_geolocation import streamlit_geolocation
-import time
 from utils.timing import timing_decorator
+from folium.plugins import HeatMap
 
 from utils.data_loader import load_invaders_data, get_cities
 from utils.map_utils import create_base_map, add_invaders_to_map
@@ -207,7 +206,6 @@ def main():
             # Add heatmap layer if requested (without modifying the existing function)
             if show_heatmap and len(filtered_df) > 0:
                 try:
-                    from folium.plugins import HeatMap
 
                     # Add heatmap directly to the map
                     heat_data = [
