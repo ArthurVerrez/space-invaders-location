@@ -121,9 +121,9 @@ def main():
     st.markdown(
         """
     This application displays the locations of Space Invader street art around the world.
-    Use the filters to explore different cities and view details about each invader.
     """
     )
+    st.markdown("<small>Coucou Michele 👋</small>", unsafe_allow_html=True)
 
     # Sidebar filters with more intuitive layout
     st.sidebar.header("Filters")
